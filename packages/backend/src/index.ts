@@ -7,6 +7,7 @@
  */
 
 import { createBackend } from '@backstage/backend-defaults';
+import { deploymentModule } from './plugins/deployment';
 
 const backend = createBackend();
 
@@ -69,7 +70,12 @@ backend.add(import('@backstage/plugin-mcp-actions-backend'));
 // servicenow plugin
 backend.add(import('@backstage-community/plugin-servicenow-backend'));
 
-//servicenow scaffolder module
-backend.add(import('@backstage-community/plugin-scaffolder-backend-module-servicenow'));
+// servicenow scaffolder module
+backend.add(
+  import('@backstage-community/plugin-scaffolder-backend-module-servicenow'),
+);
+
+// Custom deployment module
+backend.add(deploymentModule);
 
 backend.start();
