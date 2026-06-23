@@ -59,6 +59,7 @@ e2e-test-report/
 app-config.production.yaml
 app-config.*.local
 app-config.secrets.yaml
+app-config.yaml
 
 # Additional recommended ignores
 # Editor and IDE
