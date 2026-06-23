@@ -66,6 +66,12 @@ proxy:
   #     target: 'https://example.com'
   #     changeOrigin: true
 
+servicenow:
+  instanceUrl: https://dev406616.service-now.com
+  basicAuth:
+      username: admin
+      password: Password123!
+
 # Reference documentation http://backstage.io/docs/features/techdocs/configuration
 # Note: After experimenting with basic setup, use CI/CD to generate docs
 # and an external cloud storage when deploying TechDocs for production use-case.

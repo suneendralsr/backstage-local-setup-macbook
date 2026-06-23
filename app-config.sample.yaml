@@ -1,0 +1,76 @@
+# Sample app-config for local development and to include as a template in the repo.
+# Replace placeholders with your environment-specific values and do NOT commit
+# secrets into the repository. Keep the real production file out of the repo
+# (e.g. `app-config.production.yaml` is ignored).
+
+app:
+  title: Scaffolded Backstage App
+  baseUrl: http://localhost:3000
+  packages: all
+
+organization:
+  name: My Company
+
+backend:
+  # For production, set a secure secret via environment variables or a secrets manager.
+  # auth:
+  #   keys:
+  #     - secret: ${BACKEND_SECRET}
+  baseUrl: http://localhost:7007
+  listen:
+    port: 7007
+  csp:
+    connect-src: ["'self'", 'http:', 'https:']
+  cors:
+    origin: http://localhost:3000
+    methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
+    credentials: true
+  # Use a production database configuration in app-config.production.yaml
+  database:
+    client: better-sqlite3
+    # Example: file:./data/backstage.db
+    connection: ':memory:'
+
+integrations:
+  github:
+    - host: github.com
+      # Use an environment variable to store the PAT. Example:
+      token: ${GITHUB_TOKEN}
+
+proxy: {}
+
+servicenow:
+  # DO NOT store real credentials in this file. Use env vars or a secrets manager.
+  instanceUrl: https://<instance>.service-now.com
+  basicAuth:
+    username: REPLACE_WITH_USERNAME
+    password: REPLACE_WITH_PASSWORD
+
+techdocs:
+  builder: 'local'
+  generator:
+    runIn: 'docker'
+  publisher:
+    type: 'local'
+
+auth:
+  providers:
+    guest: {}
+
+scaffolder: {}
+
+catalog:
+  import:
+    entityFilename: catalog-info.yaml
+    pullRequestBranchName: backstage-integration
+  rules:
+    - allow: [Component, System, API, Resource, Location]
+
+kubernetes: {}
+
+permission:
+  enabled: true
+
+mcpActions:
+  name: 'My Company Backstage'
+  description: 'Tools for managing your software catalog and deployments.'

@@ -66,4 +66,10 @@ backend.add(import('@backstage/plugin-signals-backend'));
 // mcp actions plugin
 backend.add(import('@backstage/plugin-mcp-actions-backend'));
 
+// servicenow plugin
+backend.add(import('@backstage-community/plugin-servicenow-backend'));
+
+//servicenow scaffolder module
+backend.add(import('@backstage-community/plugin-scaffolder-backend-module-servicenow'));
+
 backend.start();

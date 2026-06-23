@@ -12,17 +12,39 @@ spec:
   # These parameters are used to generate the input form in the frontend, and are
   # used to gather input data for the execution of the template.
   parameters:
-    - title: Fill in some steps
+    - title: Service Details
       required:
         - name
+        - short_description
+        - urgency
       properties:
         name:
-          title: Name
+          title: Service Name
           type: string
           description: Unique name of the component
           ui:autofocus: true
           ui:options:
             rows: 5
+        short_description:
+          title: ServiceNow Incident Summary
+          type: string
+          description: Brief summary of what this service does (will create a ServiceNow incident)
+        urgency:
+          title: Urgency
+          type: string
+          enum: ['1', '2', '3']
+          enumNames: ['High', 'Medium', 'Low']
+          default: '2'
+        description:
+          title: Incident Description
+          type: string
+          description: Detailed description of the service (optional)
+          ui:widget: textarea
+        category:
+          title: Category
+          type: string
+          enum: ['software', 'hardware', 'network', 'database', 'inquiry']
+          default: 'software'
     - title: Choose a location
       required:
         - repoUrl
@@ -45,7 +67,7 @@ spec:
       input:
         url: ./content
         values:
-          name: ${{ parameters.name }}
+          name: "${{ parameters.name }}"
 
     # This step publishes the contents of the working directory to GitHub.
     # If you or your organization prefer another default branch name over 'main'
@@ -54,8 +76,8 @@ spec:
       name: Publish
       action: publish:github
       input:
-        description: This is ${{ parameters.name }}
-        repoUrl: ${{ parameters.repoUrl }}
+        description: "This is ${{ parameters.name }}"
+        repoUrl: "${{ parameters.repoUrl }}"
         defaultBranch: 'main'
 
     # The final step is to register our new component in the catalog.
@@ -63,8 +85,28 @@ spec:
       name: Register
       action: catalog:register
       input:
-        repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}
+        repoContentsUrl: "${{ steps['publish'].output.repoContentsUrl }}"
         catalogInfoPath: '/catalog-info.yaml'
+
+    # NEW: Create a ServiceNow incident for this new service
+    - id: create-servicenow-incident
+      name: Create ServiceNow Incident
+      action: servicenow:now:table:createRecord
+      input:
+        tableName: incident
+        requestBody:
+          short_description: "${{ parameters.short_description }}"
+          description: "${{ parameters.description || 'New service created: ' + parameters.name }}"
+          urgency: "${{ parameters.urgency }}"
+          impact: '2'
+          category: "${{ parameters.category }}"
+          contact_type: 'self-service'
+          u_backstage_entity_id: "${{ steps['register'].output.entityRef }}"
+        sysparmFields:
+          - number
+          - sys_id
+          - short_description
+          - state
 
     # Let's notify the user that the template has completed using the Notification action
     - id: notify
@@ -75,14 +117,16 @@ spec:
         entityRefs:
           - user:default/guest
         title: 'Template executed'
-        info: 'Your template has been executed'
+        info: 'Your template has been executed and a ServiceNow incident has been created: ${{ steps["create-servicenow-incident"].output.number }}'
         severity: 'normal'
 
   # Outputs are displayed to the user after a successful execution of the template.
   output:
     links:
       - title: Repository
-        url: ${{ steps['publish'].output.remoteUrl }}
+        url: "${{ steps['publish'].output.remoteUrl }}"
       - title: Open in catalog
         icon: catalog
-        entityRef: ${{ steps['register'].output.entityRef }}
+        entityRef: "${{ steps['register'].output.entityRef }}"
+      - title: ServiceNow Incident
+        url: "https://dev406616.service-now.com/nav_to.do?uri=incident.do?sys_id=${{ steps['create-servicenow-incident'].output.sys_id }}"

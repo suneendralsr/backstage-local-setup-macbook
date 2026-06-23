@@ -54,3 +54,62 @@ e2e-test-report/
 
 # Cache
 .cache/
+
+# Backstage production configs (keep local/samples only)
+app-config.production.yaml
+app-config.*.local
+app-config.secrets.yaml
+
+# Additional recommended ignores
+# Editor and IDE
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# OS
+Thumbs.db
+
+# Build outputs & artifacts
+build/
+out/
+lib/
+public/build/
+
+# TypeScript
+*.tsbuildinfo
+
+# Playwright / test artifacts
+playwright-report/
+test-results/
+
+# Docker
+docker-compose.override.yml
+docker-compose.local.yml
+
+# Environment / secrets (local)
+.env.local
+.env.*.local
+secrets/
+*.key
+*.pem
+*.crt
+
+# Native build artifacts
+node_modules/**/build/
+node_modules/**/lib/binding*
+*.node
+
+# pnpm
+.pnpm-store/
+.pnpm-debug.log
+
+# Caches and temp
+.cache-loader/
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Vagrant
+.vagrant/
